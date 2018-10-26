@@ -1954,10 +1954,6 @@ static int move_freepages(struct zone *zone,
 	 */
 	VM_BUG_ON(page_zone(start_page) != page_zone(end_page));
 #endif
-
-	if (num_movable)
-		*num_movable = 0;
-
 	for (page = start_page; page <= end_page;) {
 		if (!pfn_valid_within(page_to_pfn(page))) {
 			page++;
@@ -1995,6 +1991,9 @@ int move_freepages_block(struct zone *zone, struct page *page,
 {
 	unsigned long start_pfn, end_pfn;
 	struct page *start_page, *end_page;
+
+	if (num_movable)
+		*num_movable = 0;
 
 	start_pfn = page_to_pfn(page);
 	start_pfn = start_pfn & ~(pageblock_nr_pages-1);
