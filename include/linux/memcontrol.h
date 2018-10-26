@@ -70,7 +70,7 @@ struct mem_cgroup_reclaim_cookie {
 
 struct mem_cgroup_id {
 	int id;
-	atomic_t ref;
+	refcount_t ref;
 };
 
 /*
