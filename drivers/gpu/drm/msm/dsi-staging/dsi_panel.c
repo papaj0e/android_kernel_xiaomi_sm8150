@@ -44,6 +44,10 @@
 #include <linux/double_click.h>
 #include "xiaomi_frame_stat.h"
 
+#ifdef CONFIG_KLAPSE
+#include "../sde/klapse.h"
+#endif
+
 /**
  * topology is currently defined by a set of following 3 values:
  * 1. num of layer mixers
@@ -726,6 +730,10 @@ static int dsi_panel_update_backlight(struct dsi_panel *panel,
 		pr_err("invalid params\n");
 		return -EINVAL;
 	}
+
+#ifdef CONFIG_KLAPSE
+	set_rgb_slider(bl_lvl);
+#endif
 
 	if (panel->bl_config.bl_remap_flag && panel->bl_config.brightness_max_level
 		&& panel->bl_config.bl_max_level) {
