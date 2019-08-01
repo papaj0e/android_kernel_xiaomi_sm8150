@@ -721,6 +721,17 @@ endif
 GC_FLAGS += -O3 -mcpu=cortex-a76.cortex-a55+crypto+crc+dotprod
 CL_FLAGS += -O3 -mcpu=cortex-a55+crypto+crc
 
+ifdef CONFIG_LLVM_POLLY
+CL_FLAGS += -mllvm -polly \
+			-mllvm -polly-run-dce \
+			-mllvm -polly-run-inliner \
+			-mllvm -polly-opt-fusion=max \
+			-mllvm -polly-ast-use-context \
+			-mllvm -polly-detect-keep-going \
+			-mllvm -polly-vectorizer=stripmine \
+			-mllvm -polly-invariant-load-hoisting
+endif
+
 GC_FLAGS += -fgraphite-identity -floop-nest-optimize -fno-semantic-interposition -fdevirtualize-at-ltrans -fipa-pta -fno-plt 
 
 export GC_FLAGS
