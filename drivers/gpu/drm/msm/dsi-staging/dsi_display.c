@@ -19,8 +19,6 @@
 #include <linux/of.h>
 #include <linux/of_gpio.h>
 #include <linux/err.h>
-#include <drm/drm_notifier.h>
-
 #include <linux/msm_drm_notify.h>
 
 #include "msm_drv.h"
@@ -1357,7 +1355,6 @@ int dsi_display_set_power(struct drm_connector *connector,
                 event = dev->doze_state;
         }
 
-	
 	notify_data.data = &event;
 
 	switch (power_mode) {
@@ -1381,8 +1378,17 @@ int dsi_display_set_power(struct drm_connector *connector,
 		break;
 	case SDE_MODE_DPMS_OFF:
 	default:
+		if (dev->pre_state != SDE_MODE_DPMS_LP1 &&
+                                        dev->pre_state != SDE_MODE_DPMS_LP2)
+			break;
+
+		msm_drm_notifier_call_chain(MSM_DRM_EARLY_EVENT_BLANK, &notify_data);
+		rc = dsi_panel_set_nolp(display->panel);
+		msm_drm_notifier_call_chain(MSM_DRM_EVENT_BLANK, &notify_data);
 		return rc;
 	}
+
+	dev->pre_state = power_mode;
 
 	pr_debug("Power mode transition from %d to %d %s",
 		 display->panel->power_mode, power_mode,
