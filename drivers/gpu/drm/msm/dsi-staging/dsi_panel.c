@@ -48,6 +48,10 @@
 #include <linux/klapse.h>
 #endif
 
+#ifdef CONFIG_EXPOSURE_ADJUSTMENT
+#include "exposure_adjustment.h"
+#endif
+
 /**
  * topology is currently defined by a set of following 3 values:
  * 1. num of layer mixers
@@ -935,7 +939,7 @@ bool dc_skip_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
 int dsi_panel_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
 {
 	int rc = 0;
-
+	int bl_dc_min = panel->bl_config.bl_min_level * 2;
 	struct dsi_backlight_config *bl = &panel->bl_config;
 
 	if (panel->host_config.ext_bridge_num)
@@ -956,6 +960,10 @@ int dsi_panel_set_backlight(struct dsi_panel *panel, u32 bl_lvl)
 		}
 		dsi_panel_tx_cmd_set(panel, DSI_CMD_SET_DISP_DIMMINGOFF);
 	}
+#ifdef CONFIG_EXPOSURE_ADJUSTMENT
+	if (bl_lvl > 0)
+		bl_lvl = ea_panel_calc_backlight(bl_lvl < bl_dc_min ? bl_dc_min : bl_lvl);
+#endif
 
 	switch (bl->type) {
 	case DSI_BACKLIGHT_WLED:
