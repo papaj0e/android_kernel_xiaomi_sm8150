@@ -1552,7 +1552,7 @@ out:
 
 SYSCALL_DEFINE3(shmat, int, shmid, char __user *, shmaddr, int, shmflg)
 {
-	unsigned long ret;
+	unsigned long ret = 0;
 	long err;
 
 	err = do_shmat(shmid, shmaddr, shmflg, &ret, SHMLBA);
@@ -1570,7 +1570,7 @@ SYSCALL_DEFINE3(shmat, int, shmid, char __user *, shmaddr, int, shmflg)
 
 COMPAT_SYSCALL_DEFINE3(shmat, int, shmid, compat_uptr_t, shmaddr, int, shmflg)
 {
-	unsigned long ret;
+	unsigned long ret = 0;
 	long err;
 
 	err = do_shmat(shmid, compat_ptr(shmaddr), shmflg, &ret, COMPAT_SHMLBA);
