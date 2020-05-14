@@ -2961,7 +2961,7 @@ static void smblib_reg_work(struct work_struct *work)
 #define ADAPTER_XIAOMI_PD_60W 0x0f
 
 #ifdef CONFIG_THERMAL
-static int smblib_dc_therm_charging(struct smb_charger *chg,
+static void smblib_dc_therm_charging(struct smb_charger *chg,
 					int temp_level)
 {
 	int thermal_icl_ua = 0;
@@ -3021,8 +3021,6 @@ static int smblib_dc_therm_charging(struct smb_charger *chg,
 			break;
 	}
 	vote(chg->dc_icl_votable, THERMAL_DAEMON_VOTER, true, thermal_icl_ua);
-
-	return rc;
 }
 #endif
 int smblib_set_prop_dc_temp_level(struct smb_charger *chg,
