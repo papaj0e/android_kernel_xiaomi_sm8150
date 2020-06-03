@@ -1286,7 +1286,7 @@ static int noop_count(struct lock_list *entry, void *data)
 static unsigned long __lockdep_count_forward_deps(struct lock_list *this)
 {
 	unsigned long  count = 0;
-	struct lock_list *uninitialized_var(target_entry);
+	struct lock_list *target_entry;
 
 	__bfs_forwards(this, (void *)&count, noop_count, &target_entry);
 
@@ -1314,7 +1314,7 @@ unsigned long lockdep_count_forward_deps(struct lock_class *class)
 static unsigned long __lockdep_count_backward_deps(struct lock_list *this)
 {
 	unsigned long  count = 0;
-	struct lock_list *uninitialized_var(target_entry);
+	struct lock_list *target_entry;
 
 	__bfs_backwards(this, (void *)&count, noop_count, &target_entry);
 
@@ -1622,8 +1622,8 @@ check_usage(struct task_struct *curr, struct held_lock *prev,
 {
 	int ret;
 	struct lock_list this, that;
-	struct lock_list *uninitialized_var(target_entry);
-	struct lock_list *uninitialized_var(target_entry1);
+	struct lock_list *target_entry;
+	struct lock_list *target_entry1;
 
 	this.parent = NULL;
 
@@ -1880,7 +1880,7 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
 	       struct held_lock *next, int distance, struct stack_trace *trace,
 	       int (*save)(struct stack_trace *trace))
 {
-	struct lock_list *uninitialized_var(target_entry);
+	struct lock_list *target_entry;
 	struct lock_list *entry;
 	struct lock_list this;
 	int ret;
@@ -2686,7 +2686,7 @@ check_usage_forwards(struct task_struct *curr, struct held_lock *this,
 {
 	int ret;
 	struct lock_list root;
-	struct lock_list *uninitialized_var(target_entry);
+	struct lock_list *target_entry;
 
 	root.parent = NULL;
 	root.class = hlock_class(this);
@@ -2710,7 +2710,7 @@ check_usage_backwards(struct task_struct *curr, struct held_lock *this,
 {
 	int ret;
 	struct lock_list root;
-	struct lock_list *uninitialized_var(target_entry);
+	struct lock_list *target_entry;
 
 	root.parent = NULL;
 	root.class = hlock_class(this);

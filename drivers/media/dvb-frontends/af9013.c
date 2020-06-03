@@ -181,7 +181,7 @@ static int af9013_statistics_snr_result(struct dvb_frontend *fe)
 	unsigned int utmp;
 	u8 buf[3];
 	u32 snr_val;
-	const struct af9013_snr *uninitialized_var(snr_lut);
+	const struct af9013_snr *snr_lut;
 
 	dev_dbg(&client->dev, "\n");
 

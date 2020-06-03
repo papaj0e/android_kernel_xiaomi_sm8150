@@ -1734,7 +1734,7 @@ static void tso_headers_prepare(struct sk_buff *skb, unsigned char *headers,
 	unsigned char *data = skb->data;
 	unsigned int ih_off, th_off, p_len;
 	unsigned int isum_seed, tsum_seed, seq;
-	unsigned int uninitialized_var(id);
+	unsigned int id;
 	int is_ipv6;
 	long f_id = -1;    /* id of the current fragment */
 	long f_size = skb_headlen(skb) - sh_len;  /* current fragment size */

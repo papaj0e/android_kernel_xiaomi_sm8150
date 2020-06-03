@@ -109,7 +109,7 @@
 static inline int arch_futex_atomic_op_inuser(int op, u32 oparg, int *oval,
 		u32 __user *uaddr)
 {
-	int uninitialized_var(val), ret;
+	int val, ret;
 
 	__futex_prolog();
 

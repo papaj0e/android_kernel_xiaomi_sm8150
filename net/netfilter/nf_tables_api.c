@@ -1598,7 +1598,7 @@ static int nf_tables_newchain(struct net *net, struct sock *nlsk,
 			      struct netlink_ext_ack *extack)
 {
 	const struct nfgenmsg *nfmsg = nlmsg_data(nlh);
-	const struct nlattr * uninitialized_var(name);
+	const struct nlattr * name;
 	u8 genmask = nft_genmask_next(net);
 	int family = nfmsg->nfgen_family;
 	struct nft_af_info *afi;

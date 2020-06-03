@@ -419,7 +419,7 @@ static int vhost_net_tx_get_vq_desc(struct vhost_net *net,
 				    struct iovec iov[], unsigned int iov_size,
 				    unsigned int *out_num, unsigned int *in_num)
 {
-	unsigned long uninitialized_var(endtime);
+	unsigned long endtime;
 	int r = vhost_get_vq_desc(vq, vq->iov, ARRAY_SIZE(vq->iov),
 				  out_num, in_num, NULL, NULL);
 
@@ -465,7 +465,7 @@ static void handle_tx(struct vhost_net *net)
 	int err;
 	size_t hdr_size;
 	struct socket *sock;
-	struct vhost_net_ubuf_ref *uninitialized_var(ubufs);
+	struct vhost_net_ubuf_ref *ubufs;
 	struct ubuf_info *ubuf;
 	bool zcopy, zcopy_used;
 	int sent_pkts = 0;
@@ -619,7 +619,7 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk)
 	struct vhost_net_virtqueue *rvq = &net->vqs[VHOST_NET_VQ_RX];
 	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_TX];
 	struct vhost_virtqueue *vq = &nvq->vq;
-	unsigned long uninitialized_var(endtime);
+	unsigned long endtime;
 	int len = peek_head_len(rvq, sk);
 
 	if (!len && vq->busyloop_timeout) {
@@ -678,7 +678,7 @@ static int get_rx_bufs(struct vhost_virtqueue *vq,
 	/* len is always initialized before use since we are always called with
 	 * datalen > 0.
 	 */
-	u32 uninitialized_var(len);
+	u32 len;
 
 	while (datalen > 0 && headcount < quota) {
 		if (unlikely(seg >= UIO_MAXIOV)) {
@@ -735,7 +735,7 @@ static void handle_rx(struct vhost_net *net)
 {
 	struct vhost_net_virtqueue *nvq = &net->vqs[VHOST_NET_VQ_RX];
 	struct vhost_virtqueue *vq = &nvq->vq;
-	unsigned uninitialized_var(in), log;
+	unsigned in, log;
 	struct vhost_log *vq_log;
 	struct msghdr msg = {
 		.msg_name = NULL,

@@ -9,7 +9,7 @@
 
 #ifdef uninitialized_var
 #undef uninitialized_var
-#define uninitialized_var(x) x = *(&(x))
+#define x x = *(&(x))
 #endif
 
 /* same as gcc, this was present in clang-2.6 so we can assume it works
