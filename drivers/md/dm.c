@@ -1533,8 +1533,7 @@ static void __split_and_process_bio(struct mapped_device *md,
  */
 static blk_qc_t dm_make_request(struct request_queue *q, struct bio *bio)
 {
-	int rw = bio_data_dir(bio);
-	struct mapped_device *md = q->queuedata;
+	struct mapped_device *md = bio->bi_disk->private_data;
 	int srcu_idx;
 	struct dm_table *map;
 
@@ -1649,12 +1648,6 @@ void dm_init_md_queue(struct mapped_device *md)
 	 * This queue is new, so no concurrency on the queue_flags.
 	 */
 	queue_flag_clear_unlocked(QUEUE_FLAG_STACKABLE, md->queue);
-
-	/*
-	 * Initialize data that will only be used by a non-blk-mq DM queue
-	 * - must do so here (in alloc_dev callchain) before queue is used
-	 */
-	md->queue->queuedata = md;
 }
 
 void dm_init_normal_md_queue(struct mapped_device *md)
