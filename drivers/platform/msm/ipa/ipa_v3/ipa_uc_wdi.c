@@ -3219,17 +3219,19 @@ static void ipa3_uc_wdi_loaded_handler(void)
 
 int ipa3_create_wdi_mapping(u32 num_buffers, struct ipa_wdi_buffer_info *info)
 {
-	struct ipa_smmu_cb_ctx *cb = ipa3_get_smmu_ctx(IPA_SMMU_CB_WLAN);
 	int i;
 	int ret = 0;
 	int prot = IOMMU_READ | IOMMU_WRITE;
+	struct iommu_domain *wlan_domain;
+
+	wlan_domain = ipa3_get_wlan_smmu_domain();
 
 	if (!info) {
 		IPAERR("info = %pK\n", info);
 		return -EINVAL;
 	}
 
-	if (!cb->valid) {
+	if (!wlan_domain) {
 		IPAERR("No SMMU CB setup\n");
 		return -EINVAL;
 	}
@@ -3242,7 +3244,7 @@ int ipa3_create_wdi_mapping(u32 num_buffers, struct ipa_wdi_buffer_info *info)
 	for (i = 0; i < num_buffers; i++) {
 		IPADBG_LOW("i=%d pa=0x%pa iova=0x%lx sz=0x%zx\n", i,
 			&info[i].pa, info[i].iova, info[i].size);
-		info[i].result = ipa3_iommu_map(cb->mapping->domain,
+		info[i].result = ipa3_iommu_map(wlan_domain,
 			rounddown(info[i].iova, PAGE_SIZE),
 			rounddown(info[i].pa, PAGE_SIZE),
 			roundup(info[i].size + info[i].pa -
@@ -3255,16 +3257,18 @@ int ipa3_create_wdi_mapping(u32 num_buffers, struct ipa_wdi_buffer_info *info)
 
 int ipa3_release_wdi_mapping(u32 num_buffers, struct ipa_wdi_buffer_info *info)
 {
-	struct ipa_smmu_cb_ctx *cb = ipa3_get_smmu_ctx(IPA_SMMU_CB_WLAN);
 	int i;
 	int ret = 0;
+	struct iommu_domain *wlan_domain;
+
+	wlan_domain = ipa3_get_wlan_smmu_domain();
 
 	if (!info) {
 		IPAERR("info = %pK\n", info);
 		return -EINVAL;
 	}
 
-	if (!cb->valid) {
+	if (!wlan_domain) {
 		IPAERR("No SMMU CB setup\n");
 		return -EINVAL;
 	}
@@ -3272,7 +3276,7 @@ int ipa3_release_wdi_mapping(u32 num_buffers, struct ipa_wdi_buffer_info *info)
 	for (i = 0; i < num_buffers; i++) {
 		IPADBG_LOW("i=%d pa=0x%pa iova=0x%lx sz=0x%zx\n", i,
 			&info[i].pa, info[i].iova, info[i].size);
-		info[i].result = iommu_unmap(cb->mapping->domain,
+		info[i].result = iommu_unmap(wlan_domain,
 			rounddown(info[i].iova, PAGE_SIZE),
 			roundup(info[i].size + info[i].pa -
 				rounddown(info[i].pa, PAGE_SIZE), PAGE_SIZE));
