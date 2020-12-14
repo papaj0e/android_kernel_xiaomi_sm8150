@@ -926,10 +926,7 @@ thermal_cooling_device_trip_point_show(struct device *dev,
 	instance =
 	    container_of(attr, struct thermal_instance, attr);
 
-	if (instance->trip == THERMAL_TRIPS_NONE)
-		return sprintf(buf, "-1\n");
-	else
-		return sprintf(buf, "%d\n", instance->trip);
+	return sprintf(buf, "%d\n", instance->trip);
 }
 
 ssize_t
