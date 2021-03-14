@@ -1065,11 +1065,8 @@ __thermal_cooling_device_register(struct device_node *np,
 {
 	struct thermal_cooling_device *cdev;
 	struct thermal_zone_device *pos = NULL;
-	int result;
+	int ret;
 	static struct kobject *cdev_softlink_kobj;
-
-	if (type && strlen(type) >= THERMAL_NAME_LENGTH)
-		return ERR_PTR(-EINVAL);
 
 	if (!strcmp(type, ""))
 		return ERR_PTR(-EINVAL);
@@ -1082,14 +1079,17 @@ __thermal_cooling_device_register(struct device_node *np,
 	if (!cdev)
 		return ERR_PTR(-ENOMEM);
 
-	result = ida_simple_get(&thermal_cdev_ida, 0, 0, GFP_KERNEL);
-	if (result < 0) {
-		kfree(cdev);
-		return ERR_PTR(result);
+	ret = ida_simple_get(&thermal_cdev_ida, 0, 0, GFP_KERNEL);
+	if (ret < 0)
+		goto out_kfree_cdev;
+	cdev->id = ret;
+
+	cdev->type = kstrdup(type ? type : "", GFP_KERNEL);
+	if (!cdev->type) {
+		ret = -ENOMEM;
+		goto out_ida_remove;
 	}
 
-	cdev->id = result;
-	strlcpy(cdev->type, type ? : "", sizeof(cdev->type));
 	mutex_init(&cdev->lock);
 	INIT_LIST_HEAD(&cdev->thermal_instances);
 	cdev->np = np;
@@ -1101,21 +1101,18 @@ __thermal_cooling_device_register(struct device_node *np,
 	cdev->sysfs_cur_state_req = 0;
 	cdev->sysfs_min_state_req = ULONG_MAX;
 	dev_set_name(&cdev->device, "cooling_device%d", cdev->id);
-	result = device_register(&cdev->device);
-	if (result) {
-		ida_simple_remove(&thermal_cdev_ida, cdev->id);
-		kfree(cdev);
-		return ERR_PTR(result);
-	}
+	ret = device_register(&cdev->device);
+	if (ret)
+		goto out_kfree_type;
 
 	mutex_lock(&cdev_softlink_lock);
 	if (cdev_softlink_kobj == NULL) {
 		cdev_softlink_kobj = kobject_create_and_add("cdev-by-name",
 						cdev->device.kobj.parent);
-		result = sysfs_create_link(&cdev->device.class->p->subsys.kobj,
+		ret = sysfs_create_link(&cdev->device.class->p->subsys.kobj,
 							cdev_softlink_kobj,
 							"cdev-by-name");
-		if (result) {
+		if (ret) {
 			dev_err(&cdev->device,
 				"Fail to create cdev_map "
 				"soft link in class\n");
@@ -1123,9 +1120,9 @@ __thermal_cooling_device_register(struct device_node *np,
 	}
 	mutex_unlock(&cdev_softlink_lock);
 
-	result = sysfs_create_link(cdev_softlink_kobj,
+	ret = sysfs_create_link(cdev_softlink_kobj,
 				&cdev->device.kobj, cdev->type);
-	if (result)
+	if (ret)
 		dev_err(&cdev->device, "Failed to create cdev_map soft link\n");
 
 	/* Add 'this' new cdev to the global cdev list */
@@ -1144,6 +1141,14 @@ __thermal_cooling_device_register(struct device_node *np,
 	mutex_unlock(&thermal_list_lock);
 
 	return cdev;
+
+out_kfree_type:
+	kfree(cdev->type);
+	put_device(&cdev->device);
+out_ida_remove:
+	ida_simple_remove(&thermal_cdev_ida, cdev->id);
+out_kfree_cdev:
+	return ERR_PTR(ret);
 }
 
 /**
@@ -1251,7 +1256,9 @@ void thermal_cooling_device_unregister(struct thermal_cooling_device *cdev)
 	mutex_unlock(&thermal_list_lock);
 
 	ida_simple_remove(&thermal_cdev_ida, cdev->id);
-	device_unregister(&cdev->device);
+	device_del(&cdev->device);
+	kfree(cdev->type);
+	put_device(&cdev->device);
 }
 EXPORT_SYMBOL_GPL(thermal_cooling_device_unregister);
 
