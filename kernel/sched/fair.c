@@ -7506,9 +7506,6 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 	if (prefer_idle && boosted)
 		target_capacity = 0;
 
-	if (p->in_iowait)
-		most_spare_wake_cap = LONG_MIN;
-
 	/* Find start CPU based on boost value */
 	start_cpu = fbt_env->start_cpu;
 	/* Find SD for the start CPU */
@@ -7816,10 +7813,6 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 
 		next_group_higher_cap = (capacity_orig_of(group_first_cpu(sg)) <
 			capacity_orig_of(group_first_cpu(sg->next)));
-
-		if (p->in_iowait && !next_group_higher_cap &&
-				most_spare_cap_cpu != -1)
-			break;
 
 		/*
 		 * If we've found a cpu, but the boost is ON_ALL we continue
@@ -9174,6 +9167,10 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
 
 	if (p->in_iowait && is_min_capacity_cpu(env->dst_cpu) &&
 			!is_min_capacity_cpu(env->src_cpu))
+		return 0;
+
+	/* Disregard pcpu kthreads; they are where they need to be. */
+	if ((p->flags & PF_KTHREAD) && kthread_is_per_cpu(p))
 		return 0;
 
 	if (!cpumask_test_cpu(env->dst_cpu, &p->cpus_allowed)) {
