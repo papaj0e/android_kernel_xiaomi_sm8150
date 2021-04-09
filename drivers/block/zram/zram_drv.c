@@ -1774,6 +1774,12 @@ static int msm_drm_notifier_callback(struct notifier_block *self,
 		screen_on = false;
 		queue_work(system_power_efficient_wq, &zram_wb_fb_worker);
 		break;
+	case MSM_DRM_BLANK_UNBLANK:
+		if (screen_on)
+			goto out;
+		screen_on = true;
+		queue_work(system_power_efficient_wq, &zram_wb_fb_worker);
+		break;
 	}
 
 out:
