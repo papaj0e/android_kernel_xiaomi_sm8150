@@ -558,7 +558,7 @@
 	};
 
 	chosen {
-		bootargs = "quiet nodebugmon rcupdate.rcu_normal_after_boot=1 rcu_nocbs=0-7 cgroup.memory=nokmem,nosocket kpti=off noirqdebug printk.devkmsg=on";
+		bootargs = "quiet nodebugmon rcupdate.rcu_normal_after_boot=1 rcu_nocbs=0-7 cgroup.memory=nokmem,nosocket kpti=off noirqdebug nosoftlockup mce=ignore_ce printk.devkmsg=on";
 	};
 
 	soc: soc { };
