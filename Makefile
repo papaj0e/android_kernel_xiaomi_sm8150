@@ -721,6 +721,8 @@ endif
 GC_FLAGS += -O3 -mcpu=cortex-a76.cortex-a55+crypto+crc+dotprod
 CL_FLAGS += -O3 -mcpu=cortex-a55+crypto+crc
 
+GC_FLAGS += -fgraphite-identity -floop-nest-optimize -fno-semantic-interposition -fdevirtualize-at-ltrans -fipa-pta -fno-plt 
+
 export GC_FLAGS
 export CL_FLAGS
 
