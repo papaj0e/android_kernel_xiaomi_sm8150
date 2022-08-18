@@ -168,7 +168,7 @@ static int rpm_smd_cdev_probe(struct platform_device *pdev)
 		return -ENXIO;
 	}
 
-	strlcpy(rpm_smd_dev->dev_name, np->name, THERMAL_NAME_LENGTH);
+	strscpy(rpm_smd_dev->dev_name, np->name, THERMAL_NAME_LENGTH);
 
 	/* Be pro-active and mitigate till we get first vote from TF */
 	rpm_smd_send_request_to_rpm(rpm_smd_dev, RPM_SMD_COLD);

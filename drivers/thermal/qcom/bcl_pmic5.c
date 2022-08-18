@@ -536,7 +536,7 @@ static int bcl_parse_devicetree_virtual_data(struct bcl_device *bcl_perph)
 	}
 
 	for_each_available_child_of_node(bcl_virtual_parent, child) {
-		strlcpy(virtual_sensor.virt_zone_name, child->name,
+		strscpy(virtual_sensor.virt_zone_name, child->name,
 			THERMAL_NAME_LENGTH);
 		virtual_sensor.logic = VIRT_COUNT_THRESHOLD;
 		virtual_sensor.avg_offset = 0;
@@ -581,7 +581,7 @@ static int bcl_parse_devicetree_virtual_data(struct bcl_device *bcl_perph)
 				rc = -ENOMEM;
 				goto free_devm;
 			}
-			strlcpy(virtual_sensor.sensor_names[i],
+			strscpy(virtual_sensor.sensor_names[i],
 				dt_sensor_names[i], THERMAL_NAME_LENGTH);
 		}
 		bcl_perph->virtual_tz_dev[count] =

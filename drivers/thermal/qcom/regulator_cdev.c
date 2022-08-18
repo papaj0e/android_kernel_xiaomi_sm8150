@@ -154,7 +154,7 @@ static int reg_cdev_probe(struct platform_device *pdev)
 	reg_dev->lvl_ct--;
 	reg_dev->min_reg_state = reg_dev->lvl_ct;
 	reg_dev->reg_enable = false;
-	strlcpy(reg_dev->reg_name, np->name, THERMAL_NAME_LENGTH);
+	strscpy(reg_dev->reg_name, np->name, THERMAL_NAME_LENGTH);
 
 	reg_dev->cool_dev = thermal_of_cooling_device_register(
 					np, reg_dev->reg_name, reg_dev,

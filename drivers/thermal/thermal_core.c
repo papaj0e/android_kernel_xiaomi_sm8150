@@ -1374,7 +1374,7 @@ thermal_zone_device_register(const char *type, int trips, int mask,
 		goto free_tz;
 
 	tz->id = result;
-	strlcpy(tz->type, type, sizeof(tz->type));
+	strscpy(tz->type, type, sizeof(tz->type));
 
 	result = dev_set_name(&tz->device, "thermal_zone%d", tz->id);
 	if (result)

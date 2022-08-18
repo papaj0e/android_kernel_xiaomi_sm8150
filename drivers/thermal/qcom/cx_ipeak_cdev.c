@@ -224,7 +224,7 @@ static int cxip_lm_cdev_probe(struct platform_device *pdev)
 	cxip_dev->state = true;
 	cxip_lm_therm_vote_apply(cxip_dev, cxip_dev->state);
 
-	strlcpy(cxip_dev->cdev_name, np->name, THERMAL_NAME_LENGTH);
+	strscpy(cxip_dev->cdev_name, np->name, THERMAL_NAME_LENGTH);
 	cxip_dev->cool_dev = thermal_of_cooling_device_register(
 					np, cxip_dev->cdev_name, cxip_dev,
 					&cxip_lm_device_ops);

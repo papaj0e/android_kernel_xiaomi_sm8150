@@ -197,7 +197,7 @@ static int qmi_tmd_send_state_request(struct qmi_cooling_device *qmi_cdev,
 	memset(&req, 0, sizeof(req));
 	memset(&tmd_resp, 0, sizeof(tmd_resp));
 
-	strlcpy(req.mitigation_dev_id.mitigation_dev_id, qmi_cdev->qmi_name,
+	strscpy(req.mitigation_dev_id.mitigation_dev_id, qmi_cdev->qmi_name,
 		QMI_TMD_MITIGATION_DEV_ID_LENGTH_MAX_V01);
 	req.mitigation_level = state;
 
@@ -559,13 +559,13 @@ static int of_get_qmi_tmd_platform_data(struct device *dev)
 				return ret;
 			}
 
-			strlcpy(qmi_cdev->cdev_name, cdev_np->name,
+			strscpy(qmi_cdev->cdev_name, cdev_np->name,
 				THERMAL_NAME_LENGTH);
 
 			if (!of_property_read_string(cdev_np,
 					"qcom,qmi-dev-name",
 					&qmi_name)) {
-				strlcpy(qmi_cdev->qmi_name, qmi_name,
+				strscpy(qmi_cdev->qmi_name, qmi_name,
 						QMI_CLIENT_NAME_LENGTH);
 			} else {
 				dev_err(dev, "Fail to parse dev name for %s\n",

@@ -274,7 +274,7 @@ static int qmi_ts_request(struct qmi_sensor *qmi_sens,
 	memset(&req, 0, sizeof(req));
 	memset(&resp, 0, sizeof(resp));
 
-	strlcpy(req.sensor_id.sensor_id, qmi_sens->qmi_name,
+	strscpy(req.sensor_id.sensor_id, qmi_sens->qmi_name,
 		QMI_TS_SENSOR_ID_LENGTH_MAX_V01);
 	req.seq_num = 0;
 	if (send_current_temp_report) {
@@ -638,7 +638,7 @@ static int of_get_qmi_ts_platform_data(struct device *dev)
 			of_property_read_string_index(subsys_np,
 					"qcom,qmi-sensor-names", sens_idx,
 					&qmi_name);
-			strlcpy(qmi_sens->qmi_name, qmi_name,
+			strscpy(qmi_sens->qmi_name, qmi_name,
 						QMI_CLIENT_NAME_LENGTH);
 			/* Check for supported qmi sensors */
 			for (i = 0; i < QMI_TS_MAX_NR; i++) {
