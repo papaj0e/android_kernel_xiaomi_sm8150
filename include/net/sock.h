@@ -456,7 +456,9 @@ struct sock {
 	u32			sk_max_ack_backlog;
 	kuid_t			sk_uid;
 	spinlock_t		sk_peer_lock;
+#if IS_ENABLED(CONFIG_MIHW)
 	pid_t			pid_num;
+#endif
 	struct pid		*sk_peer_pid;
 	const struct cred	*sk_peer_cred;
 

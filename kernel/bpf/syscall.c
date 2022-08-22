@@ -1641,6 +1641,7 @@ static int bpf_obj_get_info_by_fd(const union bpf_attr *attr,
 	return err;
 }
 
+#if IS_ENABLED(CONFIG_MIHW)
 static int bpf_get_comm_hash(union bpf_attr *attr)
 {
 	void __user *uhash = u64_to_user_ptr(attr->hash);
@@ -1665,6 +1666,7 @@ static int bpf_get_comm_hash(union bpf_attr *attr)
 		return -EFAULT;
 	return 0;
 }
+#endif
 
 SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, size)
 {
@@ -1741,9 +1743,11 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *, uattr, unsigned int, siz
 	case BPF_OBJ_GET_INFO_BY_FD:
 		err = bpf_obj_get_info_by_fd(&attr, uattr);
 		break;
+#if IS_ENABLED(CONFIG_MIHW)
 	case BPF_GET_COMM_HASH:
 		err = bpf_get_comm_hash(&attr);
 		break;
+#endif
 	default:
 		err = -EINVAL;
 		break;
