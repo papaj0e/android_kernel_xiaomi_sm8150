@@ -6475,7 +6475,7 @@ static void soc_monitor_work(struct work_struct *work)
 		}
 	}
 
-	schedule_delayed_work(&fg->soc_monitor_work,
+	queue_delayed_work(system_power_efficient_wq, &fg->soc_monitor_work,
 			msecs_to_jiffies(MONITOR_SOC_WAIT_PER_MS));
 }
 
@@ -6796,7 +6796,7 @@ static int fg_gen4_probe(struct platform_device *pdev)
 	mod_delayed_work(system_freezable_power_efficient_wq, &fg->soc_work, 0);
 
 	fg->param.batt_soc = -EINVAL;
-	schedule_delayed_work(&fg->soc_monitor_work,
+	queue_delayed_work(system_power_efficient_wq, &fg->soc_monitor_work,
 				msecs_to_jiffies(MONITOR_SOC_WAIT_MS));
 
 	/*
@@ -6904,7 +6904,7 @@ static int fg_gen4_resume(struct device *dev)
 				msecs_to_jiffies(fg_sram_dump_period_ms));
 
 	fg->param.update_now = true;
-	schedule_delayed_work(&fg->soc_monitor_work,
+	queue_delayed_work(system_power_efficient_wq, &fg->soc_monitor_work,
 				msecs_to_jiffies(MONITOR_SOC_WAIT_MS));
 	return 0;
 }
