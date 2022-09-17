@@ -928,7 +928,7 @@ static ssize_t goodix_ts_game_mode_store(struct device *dev,
 	int rc, i;
 	unsigned int u[Touch_Mode_NUM] = { 0 };
 
-	ts_info("GAME -> buf : %s, len : %d\n", buf, count);
+	ts_info("GAME -> buf : %s, len : %lu\n", buf, count);
 
 	rc = sscanf(buf, "%d %d %d %d\n", &u[Touch_Game_Mode], &u[Touch_Tolerance], &u[Touch_UP_THRESHOLD], &u[Touch_Edge_Filter]);
 
@@ -1040,7 +1040,7 @@ static void release_all_touches(struct goodix_ts_core *core_data)
 		input_mt_slot(core_data->input_dev, i);
 		input_mt_report_slot_state(core_data->input_dev, type, 0);
 	}
-	ts_debug("enter:%s core_data->touch_id=%d\n", __func__, core_data->touch_id);
+	ts_err("enter:%s core_data->touch_id=%lu\n", __func__, core_data->touch_id);
 	core_data->sleep_finger = core_data->touch_id;
 	core_data->touch_id = 0;
 	input_sync(core_data->input_dev);

@@ -286,7 +286,7 @@ static int goodix_check_update(struct goodix_ts_device *dev,
 		ts_info("pid_len=%d\n",dev->reg.pid_len);
 		ts_info("tp.pid=%s fw.pid=%s\n",fw_ver.pid,fw_info->fw_pid);
 		if (memcmp(fw_ver.pid, fw_info->fw_pid, dev->reg.pid_len)) {
-			ts_err("tp.pid=0x%x fw.pid=0x%x\n",fw_ver.pid,fw_info->fw_pid);
+			ts_err("tp.pid=0x%x fw.pid=0x%x\n",*(uint8_t *)fw_ver.pid,*(uint8_t *)fw_info->fw_pid);
 			ts_err("Product ID is not match");
 			return -EPERM;
 		}
