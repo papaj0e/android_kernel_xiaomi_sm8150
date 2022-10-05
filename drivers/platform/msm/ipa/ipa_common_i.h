@@ -499,9 +499,9 @@ int ipa_wigig_send_msg(int msg_type,
 	enum ipa_client_type client, bool to_wigig);
 
 void ipa_register_client_callback(int (*client_cb)(bool is_lock),
-			bool (*teth_port_state)(void), u32 ipa_ep_idx);
+			bool (*teth_port_state)(void), enum ipa_client_type ipa_ep_idx);
 
-void ipa_deregister_client_callback(u32 ipa_ep_idx);
+void ipa_deregister_client_callback(enum ipa_client_type ipa_ep_idx);
 
 int ipa_eth_rtk_connect(
 	struct ipa_eth_client_pipe_info *pipe,
