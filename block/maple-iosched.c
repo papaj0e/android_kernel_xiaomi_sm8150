@@ -89,11 +89,12 @@ maple_add_request(struct request_queue *q, struct request *rq)
 	 * Add request to the proper fifo list and set its
 	 * expire time.
 	 */
+   	unsigned int fifo_expire_suspended = mdata->fifo_expire[sync][dir] * sleep_latency_multiple;
    	if (mdata->display_on && mdata->fifo_expire[sync][dir]) {
-        rq->fifo_time = jiffies + mdata->fifo_expire[sync][dir];
+        	rq->fifo_time = jiffies + mdata->fifo_expire[sync][dir];
    		list_add_tail(&rq->queuelist, &mdata->fifo_list[sync][dir]);
    	} else if (!mdata->display_on && fifo_expire_suspended) {
-        rq->fifo_time = jiffies + fifo_expire_suspended;
+        	rq->fifo_time = jiffies + fifo_expire_suspended;
 		list_add_tail(&rq->queuelist, &mdata->fifo_list[sync][dir]);
 	}
 }
@@ -415,7 +416,7 @@ static struct elv_fs_entry maple_attrs[] = {
 };
 
 static struct elevator_type iosched_maple = {
-	.ops = {
+	.ops.sq = {
 		.elevator_merge_req_fn		= maple_merged_requests,
 		.elevator_dispatch_fn		= maple_dispatch_requests,
 		.elevator_add_req_fn		= maple_add_request,
