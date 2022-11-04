@@ -404,8 +404,12 @@ static int zs_zpool_malloc(void *pool, size_t size, gfp_t gfp,
 			unsigned long *handle)
 {
 	*handle = zs_malloc(pool, size, gfp);
-	return *handle ? 0 : -1;
+
+	if (IS_ERR_VALUE(*handle))
+		return PTR_ERR((void *)*handle);
+	return 0;
 }
+
 static void zs_zpool_free(void *pool, unsigned long handle)
 {
 	zs_free(pool, handle);
