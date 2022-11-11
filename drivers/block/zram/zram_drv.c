@@ -54,10 +54,10 @@ static unsigned int num_devices = 1;
  */
 static size_t huge_class_size;
 
-static bool screen_on = true;
 static unsigned long long total_touch_clock;
 module_param(total_touch_clock, ullong, 0644);
 #ifdef CONFIG_ZRAM_WRITEBACK
+static bool screen_on = true;
 static DEFINE_MUTEX(zram_wb_wakelock_mutex);
 static struct wakeup_source zram_wb_wakelock;
 
@@ -317,6 +317,7 @@ static ssize_t mem_used_max_store(struct device *dev,
 	return len;
 }
 
+#ifdef CONFIG_ZRAM_WRITEBACK
 // Returns the number of marked blocks
 static int mark_idle(struct zram *zram, unsigned long long threshold)
 {
@@ -353,7 +354,6 @@ static int mark_idle(struct zram *zram, unsigned long long threshold)
 	return ret;
 }
 
-#ifdef CONFIG_ZRAM_WRITEBACK
 static void reset_bdev(struct zram *zram)
 {
 	struct block_device *bdev;
