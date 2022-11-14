@@ -357,7 +357,7 @@ void cpu_limits_set_level(unsigned int cpu, unsigned int max_freq)
 		sscanf(cpufreq_cdev->cdev->type, "thermal-cpufreq-%d", &cdev_cpu);
 		if (cdev_cpu == cpu) {
 			for (level = 0; level < cpufreq_cdev->max_level; level++) {
-				int target_freq = cpufreq_cdev->em->table[level].frequency;
+				int target_freq = cpufreq_cdev->freq_table[level].frequency;
 				if (max_freq >= target_freq) {
 					cdev = cpufreq_cdev->cdev;
 					if (cdev)
