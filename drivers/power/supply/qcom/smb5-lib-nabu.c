@@ -36,7 +36,7 @@
 #define smblib_dbg(chg, reason, fmt, ...)			\
 	do {							\
 		if (*chg->debug_mask & (reason))		\
-			pr_info("%s: %s: " fmt, chg->name,	\
+			pr_debug("%s: %s: " fmt, chg->name,	\
 				__func__, ##__VA_ARGS__);	\
 		else						\
 			pr_debug("%s: %s: " fmt, chg->name,	\
@@ -1398,7 +1398,7 @@ static inline void dump_reg(struct smb_charger *chg, u16 addr,
 
 	if (NULL == name) {
 		strlcat(log, "\n", sizeof(log));
-		printk(log);
+		pr_debug("%s", log);
 		return;
 	}
 
