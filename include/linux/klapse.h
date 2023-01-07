@@ -9,7 +9,7 @@ typedef u32 bl_type_t;
 extern void set_rgb_slider(bl_type_t bl_lvl);
 
 /* Variable type for rgb */
-typedef unsigned short col_type_t;
+typedef unsigned int col_type_t;
 
 #if KLAPSE_MDSS
  #define K_RED    kcal_get_color(0)
