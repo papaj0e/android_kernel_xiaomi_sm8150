@@ -6529,7 +6529,7 @@ static void soc_monitor_work(struct work_struct *work)
 		}
 	}
 
-	queue_delayed_work(system_power_efficient_wq, &fg->soc_monitor_work,
+	mod_delayed_work(system_freezable_power_efficient_wq, &fg->soc_monitor_work,
 			msecs_to_jiffies(MONITOR_SOC_WAIT_PER_MS));
 }
 
@@ -6677,8 +6677,8 @@ static int fg_gen4_probe(struct platform_device *pdev)
 	INIT_DEFERRABLE_WORK(&fg->soc_work, soc_work_fn);
 	INIT_DEFERRABLE_WORK(&fg->empty_restart_fg_work, empty_restart_fg_work);
 	INIT_DEFERRABLE_WORK(&chip->pl_enable_work, pl_enable_work);
+	INIT_DEFERRABLE_WORK(&fg->soc_monitor_work, soc_monitor_work);
 	INIT_WORK(&chip->pl_current_en_work, pl_current_en_work);
-	INIT_DELAYED_WORK(&fg->soc_monitor_work, soc_monitor_work);
 
 	fg->awake_votable = create_votable("FG_WS", VOTE_SET_ANY,
 					fg_awake_cb, fg);
@@ -6850,12 +6850,7 @@ static int fg_gen4_probe(struct platform_device *pdev)
 	if (!fg->battery_missing)
 		mod_delayed_work(system_freezable_power_efficient_wq, &fg->profile_load_work, 0);
 
-	fg_gen4_post_init(chip);
 	mod_delayed_work(system_freezable_power_efficient_wq, &fg->soc_work, 0);
-
-	fg->param.batt_soc = -EINVAL;
-	queue_delayed_work(system_power_efficient_wq, &fg->soc_monitor_work,
-				msecs_to_jiffies(MONITOR_SOC_WAIT_MS));
 
 	/*
 	 * if vbat is above 3.7V and msoc is 0% and battery temperature is
@@ -6867,6 +6862,11 @@ static int fg_gen4_probe(struct platform_device *pdev)
 			&& (msoc == 0) && (batt_temp >= TEMP_THR_RESTART_FG))
 		mod_delayed_work(system_freezable_power_efficient_wq, &fg->empty_restart_fg_work,
 				msecs_to_jiffies(RESTART_FG_START_WORK_MS));
+	fg_gen4_post_init(chip);
+
+	fg->param.batt_soc = -EINVAL;
+	mod_delayed_work(system_freezable_power_efficient_wq, &fg->soc_monitor_work,
+				msecs_to_jiffies(MONITOR_SOC_WAIT_MS));
 
 	pr_debug("FG GEN4 driver probed successfully\n");
 	return 0;
@@ -6962,7 +6962,7 @@ static int fg_gen4_resume(struct device *dev)
 				msecs_to_jiffies(fg_sram_dump_period_ms));
 
 	fg->param.update_now = true;
-	queue_delayed_work(system_power_efficient_wq, &fg->soc_monitor_work,
+	mod_delayed_work(system_freezable_power_efficient_wq, &fg->soc_monitor_work,
 				msecs_to_jiffies(MONITOR_SOC_WAIT_MS));
 	return 0;
 }
