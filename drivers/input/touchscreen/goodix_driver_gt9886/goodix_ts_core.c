@@ -828,7 +828,7 @@ static void release_all_touches(struct goodix_ts_core *core_data)
 		input_mt_slot(core_data->input_dev, i);
 		input_mt_report_slot_state(core_data->input_dev, type, 0);
 	}
-	ts_err("enter:%s core_data->touch_id=%d\n", __func__, core_data->touch_id);
+	ts_debug("enter:%s core_data->touch_id=%d\n", __func__, core_data->touch_id);
 	core_data->sleep_finger = core_data->touch_id;
 	core_data->touch_id = 0;
 	input_sync(core_data->input_dev);
@@ -1818,10 +1818,10 @@ out:
 	 */
 	goodix_ts_blocking_notify(NOTIFY_RESUME, NULL);
 
-	ts_err("core_data->fod_pressed = %d\n",core_data->fod_pressed);
+	ts_debug("core_data->fod_pressed = %d\n",core_data->fod_pressed);
 
 	if (!core_data->fod_pressed) {
-		ts_err("resume release all touch");
+		ts_debug("resume release all touch");
 		release_all_touches(core_data);
 	}
 	core_data->sleep_finger = 0;
