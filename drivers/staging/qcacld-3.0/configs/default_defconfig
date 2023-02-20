@@ -942,7 +942,7 @@ ifeq ($(CONFIG_LITHIUM), y)
 endif
 
 #Flag to enable hdd memory dump feature
-CONFIG_FEATURE_MEMDUMP_ENABLE := y
+CONFIG_FEATURE_MEMDUMP_ENABLE := n
 
 #Flag to enable/disable WLAN D0-WOW
 ifeq ($(CONFIG_PCI_MSM), y)
