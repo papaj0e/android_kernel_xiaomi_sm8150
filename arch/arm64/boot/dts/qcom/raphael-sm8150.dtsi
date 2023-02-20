@@ -871,6 +871,10 @@ And public attribution of xiaomi platforms(like F1 and so and)
 	status = "ok";
 };
 
+&pm8150l_lcdb {
+	status = "disabled";
+};
+
 &sde_dsi {
     vcie-supply = <&disp_vci_vreg>;
 };
