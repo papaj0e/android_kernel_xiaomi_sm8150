@@ -16103,7 +16103,9 @@ static QDF_STATUS hdd_qdf_init(void)
 	}
 
 	qdf_trace_init();
+#ifdef WLAN_FEATURE_MEMDUMP_ENABLE
 	qdf_register_debugcb_init();
+#endif
 
 	return QDF_STATUS_SUCCESS;
 
