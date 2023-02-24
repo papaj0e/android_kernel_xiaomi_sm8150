@@ -1390,7 +1390,7 @@ static int reverse_path_check(void)
 
 static int ep_create_wakeup_source(struct epitem *epi)
 {
-	struct name_snapshot n;
+	const char *name;
 	struct wakeup_source *ws;
 	char task_comm_buf[TASK_COMM_LEN];
 	char buf[64];
@@ -1405,11 +1405,10 @@ static int ep_create_wakeup_source(struct epitem *epi)
 			return -ENOMEM;
 	}
 
-	take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
+	name = epi->ffd.file->f_path.dentry->d_name.name;
 	snprintf(buf, sizeof(buf), "epoll_%.*s_file:%s",
-		 (int)sizeof(task_comm_buf), task_comm_buf, n.name);
+		 (int)sizeof(task_comm_buf), task_comm_buf, name);
 	ws = wakeup_source_register(NULL, buf);
-	release_dentry_name_snapshot(&n);
 
 	if (!ws)
 		return -ENOMEM;
