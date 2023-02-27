@@ -2994,9 +2994,9 @@ static int tfa98xx_ext_reset(struct tfa98xx *tfa98xx)
 {
 	if (tfa98xx && gpio_is_valid(tfa98xx->reset_gpio)) {
 		gpio_set_value_cansleep(tfa98xx->reset_gpio, 1);
-		msleep(10);
+		mdelay(10);
 		gpio_set_value_cansleep(tfa98xx->reset_gpio, 0);
-		msleep(10);
+		mdelay(10);
 	}
 	return 0;
 }
@@ -3435,7 +3435,7 @@ enum Tfa98xx_Error tfa98xx_read_data_from_hostdsp(struct tfa_device *tfa,
 	return Tfa98xx_Error_Ok;
 }
 
-static uint8_t send_to_dsp_count = 0;
+static uint8_t send_to_dsp_count;
 static int tfa98xx_read_memtrack_data(struct tfa98xx *tfa98xx, int *pLivedata)
 {
 	enum Tfa98xx_Error ret = Tfa98xx_Error_Ok;
@@ -4092,6 +4092,7 @@ static struct i2c_driver tfa98xx_i2c_driver = {
 		.name = "tfa98xx",
 		.owner = THIS_MODULE,
 		.of_match_table = of_match_ptr(tfa98xx_dt_match),
+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 	},
 	.probe =    tfa98xx_i2c_probe,
 	.remove =   tfa98xx_i2c_remove,
