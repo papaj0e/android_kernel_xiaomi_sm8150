@@ -689,7 +689,6 @@ static ssize_t tfa98xx_dbgfs_fw_state_get(struct file *file,
 	return simple_read_from_buffer(user_buf, count, ppos, str, strlen(str));
 }
 
-extern int send_tfa_cal_apr(void *buf, int cmd_size, bool bRead);
 
 static ssize_t tfa98xx_dbgfs_rpc_read(struct file *file,
 				     char __user *user_buf, size_t count,
@@ -716,12 +715,10 @@ static ssize_t tfa98xx_dbgfs_rpc_read(struct file *file,
 	}
 
 	mutex_lock(&tfa98xx->dsp_lock);
-
 	if (tfa98xx->tfa->is_probus_device) {
-		error = send_tfa_cal_apr(buffer, count, true);
-	} else {
 		error = dsp_msg_read(tfa98xx->tfa, count, buffer);
 	}
+
 	mutex_unlock(&tfa98xx->dsp_lock);
 	if (error != Tfa98xx_Error_Ok) {
 		pr_debug("[0x%x] dsp_msg_read error: %d\n", tfa98xx->i2c->addr, error);
@@ -769,7 +766,6 @@ static ssize_t tfa98xx_dbgfs_rpc_send(struct file *file,
 
 	if (tfa98xx->tfa->is_probus_device) {
 		mutex_lock(&tfa98xx->dsp_lock);
-		error = send_tfa_cal_apr(msg_file->data, msg_file->size, false);
 		if (error != Tfa98xx_Error_Ok) {
 			pr_debug("[0x%x] dsp_msg error: %d\n", tfa98xx->i2c->addr, error);
 			err = -EIO;
@@ -3355,7 +3351,6 @@ static int tfa98xx_misc_device_rpc_open(struct inode *inode, struct file *file)
 	}
 }
 
-extern int send_tfa_cal_apr(void *buf, int cmd_size, bool bRead);
 
 static ssize_t tfa98xx_misc_device_rpc_read(struct file *file, char __user *user_buf,
 											size_t count, loff_t *ppos)
@@ -3370,11 +3365,6 @@ static ssize_t tfa98xx_misc_device_rpc_read(struct file *file, char __user *user
 		return -ENOMEM;
 	}
 
-	mutex_lock(&tfa98xx->dsp_lock);
-
-	ret = send_tfa_cal_apr(buffer, count, true);
-
-	mutex_unlock(&tfa98xx->dsp_lock);
 	if (ret) {
 		pr_err("[0x%x] dsp_msg_read error: %d\n", tfa98xx->i2c->addr, ret);
 		kfree(buffer);
@@ -3409,17 +3399,6 @@ static ssize_t tfa98xx_misc_device_rpc_write(struct file *file, const char __use
 	if (copy_from_user(buffer, user_buf, count))
 		return -EFAULT;
 
-	mutex_lock(&tfa98xx->dsp_lock);
-
-	err = send_tfa_cal_apr(buffer, count, false);
-	if (err) {
-		pr_err("[0x%x] dsp_msg error: %d\n", tfa98xx->i2c->addr, err);
-	}
-
-	mdelay(2);
-
-	mutex_unlock(&tfa98xx->dsp_lock);
-
 	kfree(buffer);
 
 	if (err)
@@ -3432,7 +3411,6 @@ enum Tfa98xx_Error tfa98xx_read_data_from_hostdsp(struct tfa_device *tfa,
 												unsigned char param_id, int num_bytes,
 												unsigned char data[])
 {
-	int error;
 	unsigned char buffer[3];
 	int nr = 0;
 
@@ -3454,15 +3432,6 @@ enum Tfa98xx_Error tfa98xx_read_data_from_hostdsp(struct tfa_device *tfa,
 	buffer[nr++] = module_id + 128;
 	buffer[nr++] = param_id;
 
-	error = send_tfa_cal_apr(buffer, sizeof(buffer), false);
-	if (error)
-		return Tfa98xx_Error_Bad_Parameter;
-	mdelay(5);
-
-	/* read the data from the dsp */
-	error = send_tfa_cal_apr(data, sizeof(num_bytes), true);
-	if (error)
-		return Tfa98xx_Error_Bad_Parameter;
 	return Tfa98xx_Error_Ok;
 }
 
@@ -3574,11 +3543,7 @@ static int tfa98xx_read_memtrack_data(struct tfa98xx *tfa98xx, int *pLivedata)
 		pr_info("send command to dsp to build memtrack structure.\n");
 		/* send command to host dsp. */
         if (tfa98xx->tfa->is_probus_device) {
-            send_tfa_cal_apr(buffer, item_bytes + 6, false);
-			send_to_dsp_count = 0;
-			mdelay(5);
-        } else {
-		ret = dsp_msg(tfa98xx->tfa, item_bytes + 6, buffer);
+			ret = tfa_dsp_msg(tfa98xx->tfa, item_bytes + 6, buffer);
         }
 
 		if (Tfa98xx_Error_Ok == ret) {
