@@ -39,8 +39,10 @@
 #include <dsp/q6core.h>
 #include <dsp/q6common.h>
 #include <dsp/audio_cal_utils.h>
+#if CONFIG_ELLIPTIC_ULTRASOUND
 #include <dsp/apr_elliptic.h>
 #include <elliptic/elliptic_mixer_controls.h>
+#endif
 
 #include "msm-pcm-routing-v2.h"
 #include "msm-pcm-routing-devdep.h"
@@ -24064,7 +24066,9 @@ static int msm_routing_probe(struct snd_soc_platform *platform)
 			port_multi_channel_map_mixer_controls,
 			ARRAY_SIZE(port_multi_channel_map_mixer_controls));
 
+#if CONFIG_ELLIPTIC_ULTRASOUND
 	elliptic_add_platform_controls(platform);
+#endif
 
 	return 0;
 }
