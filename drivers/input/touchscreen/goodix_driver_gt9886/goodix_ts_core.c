@@ -542,14 +542,14 @@ static ssize_t goodix_ts_send_cfg_store(struct device *dev,
 	const struct firmware *cfg_img;
 	struct goodix_ts_config *config = NULL;
 
-	ts_err("%s::enter\n",__func__);
+	/*ts_err("%s::enter\n",__func__);*/
 	if (sscanf(buf, "%d", &en) != 1)
 		return -EINVAL;
 
 	if (en != 1)
 		return -EINVAL;
 
-	ts_err("en:%d", en);
+	/*ts_err("en:%d", en);*/
 	disable_irq(core_data->irq);
 
 	/*request configuration*/
@@ -1051,7 +1051,7 @@ static void release_all_touches(struct goodix_ts_core *core_data)
 		input_mt_slot(core_data->input_dev, i);
 		input_mt_report_slot_state(core_data->input_dev, type, 0);
 	}
-	ts_err("enter:%s core_data->touch_id=%lu\n", __func__, core_data->touch_id);
+	/*ts_err("enter:%s core_data->touch_id=%lu\n", __func__, core_data->touch_id);*/
 	core_data->sleep_finger = core_data->touch_id;
 	core_data->touch_id = 0;
 	input_sync(core_data->input_dev);
@@ -1240,7 +1240,7 @@ static irqreturn_t goodix_ts_threadirq_func(int irq, void *data)
 			if (!ext_module->funcs->irq_event)
 				continue;
 			r = ext_module->funcs->irq_event(core_data, ext_module);
-			ts_err("enter %s r=%d\n", __func__, r);
+			/*ts_err("enter %s r=%d\n", __func__, r);*/
 			if (r == EVT_CANCEL_IRQEVT) {
 				/*ts_err("enter %s EVT_CANCEL_IRQEVT \n", __func__);*/
 				mutex_unlock(&goodix_modules.mutex);
@@ -1351,7 +1351,7 @@ int goodix_ts_power_on(struct goodix_ts_core *core_data)
 	struct goodix_ts_board_data *ts_bdata = board_data(core_data);
 	int r = 0;
 
-	ts_err("enter::%s\n",__func__);
+	/*ts_err("enter::%s\n",__func__);*/
 	if (core_data->power_on)
 		return 0;
 	gpio_direction_output(ts_bdata->vdd_gpio, 1);
@@ -2777,7 +2777,7 @@ static int goodix_ts_probe(struct platform_device *pdev)
 	int r;
 	u8 read_val = 0;
 
-	ts_err("enter::%s\n",__func__);
+	/*ts_err("enter::%s\n",__func__);*/
 	ts_device = pdev->dev.platform_data;
 	if (!ts_device || !ts_device->hw_ops ||
 			!ts_device->board_data) {
