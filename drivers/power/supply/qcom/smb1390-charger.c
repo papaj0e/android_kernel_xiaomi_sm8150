@@ -378,7 +378,7 @@ static ssize_t enable_store(struct class *c, struct class_attribute *attr,
 	if (kstrtoul(buf, 0, &val))
 		return -EINVAL;
 
-	pr_info("enable smb1390: %d\n", val);
+	pr_debug("enable smb1390: %ld\n", val);
 	vote(chip->disable_votable, USER_VOTER, !val, 0);
 	return count;
 }
@@ -700,7 +700,7 @@ static void smb1390_status_change_work(struct work_struct *work)
 		}
 		charge_type = pval.intval;
 
-		pr_info("capacity:%d, batt_temp:%d, charge_type:%d\n",
+		pr_debug("capacity:%d, batt_temp:%d, charge_type:%d\n",
 				capacity, batt_temp, charge_type);
 
 		/*
