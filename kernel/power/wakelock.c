@@ -235,9 +235,6 @@ int pm_wake_lock(const char *buf)
 		ret = PTR_ERR(wl);
 		goto out;
 	}
-	if (!strncmp(buf, "hal_bluetooth_lock", len) ||
-	    !strncmp(buf, "c8c000.qcom,qup_uart", len))
-		timeout_ns = 500;
 	if (timeout_ns) {
 		u64 timeout_ms = timeout_ns + NSEC_PER_MSEC - 1;
 
