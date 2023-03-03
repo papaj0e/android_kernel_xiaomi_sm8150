@@ -35,7 +35,9 @@ static int __init audio_q6_init(void)
 	crus_sp_init();
 #endif
 	msm_mdf_init();
+#ifdef CONFIG_MHI_BUS
 	voice_mhi_init();
+#endif
 #if CONFIG_ELLIPTIC_ULTRASOUND
 	elliptic_driver_init();
 #endif
@@ -61,7 +63,9 @@ static void __exit audio_q6_exit(void)
 	rtac_exit();
 	audio_cal_exit();
 	adsp_err_exit();
+#ifdef CONFIG_MHI_BUS
 	voice_mhi_exit();
+#endif
 #if CONFIG_ELLIPTIC_ULTRASOUND
 	elliptic_driver_exit();
 #endif
