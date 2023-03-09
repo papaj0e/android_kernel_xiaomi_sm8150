@@ -111,8 +111,6 @@ static void diag_bridge_delete(struct kref *kref)
 	usb_kill_anchored_urbs(&dev->submitted);
 	usb_put_intf(ifc);
 	dev->ifc = NULL;
-	dev->in_epAddr = 0;
-	dev->out_epAddr = 0;
 	usb_put_dev(dev->udev);
 }
 
