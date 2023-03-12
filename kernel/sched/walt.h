@@ -356,12 +356,12 @@ static inline void walt_task_dump(struct task_struct *p)
 	int i, j = 0;
 	int buffsz = NR_CPUS * 16;
 
-	SCHED_PRINT(p->pid);
+	SCHED_PRINT((u64)p->pid);
 	SCHED_PRINT(p->ravg.mark_start);
-	SCHED_PRINT(p->ravg.demand);
-	SCHED_PRINT(p->ravg.coloc_demand);
-	SCHED_PRINT(sched_ravg_window);
-	SCHED_PRINT(new_sched_ravg_window);
+	SCHED_PRINT((u64)p->ravg.demand);
+	SCHED_PRINT((u64)p->ravg.coloc_demand);
+	SCHED_PRINT((u64)sched_ravg_window);
+	SCHED_PRINT((u64)new_sched_ravg_window);
 
 	for (i = 0 ; i < nr_cpu_ids; i++)
 		j += scnprintf(buff + j, buffsz - j, "%u ",
@@ -377,8 +377,8 @@ static inline void walt_task_dump(struct task_struct *p)
 
 	SCHED_PRINT(p->last_wake_ts);
 	SCHED_PRINT(p->last_enqueued_ts);
-	SCHED_PRINT(p->misfit);
-	SCHED_PRINT(p->unfilter);
+	SCHED_PRINT((u64)p->misfit);
+	SCHED_PRINT((u64)p->unfilter);
 }
 
 static inline void walt_rq_dump(int cpu)
@@ -391,8 +391,8 @@ static inline void walt_rq_dump(int cpu)
 			cpu, rq->nr_running, tsk->pid, tsk->comm);
 
 	printk_deferred("==========================================");
-	SCHED_PRINT(rq->window_start);
-	SCHED_PRINT(rq->prev_window_size);
+	SCHED_PRINT((u64)rq->window_start);
+	SCHED_PRINT((u64)rq->prev_window_size);
 	SCHED_PRINT(rq->curr_runnable_sum);
 	SCHED_PRINT(rq->prev_runnable_sum);
 	SCHED_PRINT(rq->nt_curr_runnable_sum);
@@ -412,8 +412,8 @@ static inline void walt_rq_dump(int cpu)
 				rq->load_subs[i].new_subs);
 	}
 	walt_task_dump(tsk);
-	SCHED_PRINT(sched_capacity_margin_up[cpu]);
-	SCHED_PRINT(sched_capacity_margin_down[cpu]);
+	SCHED_PRINT((u64)sched_capacity_margin_up[cpu]);
+	SCHED_PRINT((u64)sched_capacity_margin_down[cpu]);
 }
 
 static inline void walt_dump(void)
@@ -422,18 +422,18 @@ static inline void walt_dump(void)
 
 	printk_deferred("============ WALT RQ DUMP START ==============\n");
 	printk_deferred("Sched ktime_get: %llu\n", sched_ktime_clock());
-	printk_deferred("Time last window changed=%lu\n",
+	printk_deferred("Time last window changed=%llu\n",
 			sched_ravg_window_change_time);
 	for_each_online_cpu(cpu) {
 		walt_rq_dump(cpu);
 	}
-	SCHED_PRINT(max_possible_capacity);
-	SCHED_PRINT(min_max_possible_capacity);
+	SCHED_PRINT((u64)max_possible_capacity);
+	SCHED_PRINT((u64)min_max_possible_capacity);
 
 	printk_deferred("============ WALT RQ DUMP END ==============\n");
 }
 
-static int in_sched_bug;
+static int __maybe_unused in_sched_bug;
 #define SCHED_BUG_ON(condition)				\
 ({							\
 	if (unlikely(!!(condition)) && !in_sched_bug) {	\
