@@ -1924,7 +1924,7 @@ static void migrate_hrtimer_list(struct hrtimer_clock_base *old_base,
 		timer = container_of(node, struct hrtimer, node);
 
 		timerqueue_del(&pinned, &timer->node);
-		enqueue_hrtimer(timer, old_base);
+		enqueue_hrtimer(timer, old_base, HRTIMER_MODE_ABS);
 	}
 }
 
