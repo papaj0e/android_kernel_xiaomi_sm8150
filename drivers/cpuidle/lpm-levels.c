@@ -57,15 +57,11 @@
 #define SCLK_HZ (32768)
 #define PSCI_POWER_STATE(reset) (reset << 30)
 #define PSCI_AFFINITY_LEVEL(lvl) ((lvl & 0x3) << 24)
-#define BIAS_HYST (bias_hyst * NSEC_PER_MSEC)
 
 static struct system_pm_ops *sys_pm_ops;
 
 
 struct lpm_cluster *lpm_root_node;
-
-static uint32_t bias_hyst;
-module_param_named(bias_hyst, bias_hyst, uint, 0664);
 
 static DEFINE_PER_CPU(struct lpm_cpu*, cpu_lpm);
 static bool suspend_in_progress;
@@ -301,36 +297,23 @@ static void biastimer_start(uint32_t time_ns)
 	hrtimer_start(cpu_biastimer, bias_ktime, HRTIMER_MODE_REL_PINNED);
 }
 
-static inline bool is_cpu_biased(int cpu, uint64_t *bias_time)
-{
-	u64 now = sched_clock();
-	u64 last = sched_get_cpu_last_busy_time(cpu);
-	u64 diff = 0;
-
-	if (!last)
-		return false;
-
-	diff = now - last;
-	if (diff < BIAS_HYST) {
-		*bias_time = BIAS_HYST - diff;
-		return true;
-	}
-
-	return false;
-}
-
 static inline bool lpm_disallowed(s64 sleep_us, int cpu, struct lpm_cpu *pm_cpu)
 {
 	uint64_t bias_time = 0;
 
-	if (sleep_disabled && !cpu_isolated(cpu))
+	if (cpu_isolated(cpu))
+		goto out;
+
+	if (sleep_disabled)
 		return true;
 
-	if (is_cpu_biased(cpu, &bias_time) && (!cpu_isolated(cpu))) {
+	bias_time = sched_lpm_disallowed_time(cpu);
+	if (bias_time) {
 		pm_cpu->bias = bias_time;
 		return true;
 	}
 
+out:
 	if (sleep_us < 0)
 		return true;
 
