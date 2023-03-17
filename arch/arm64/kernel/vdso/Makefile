@@ -21,17 +21,12 @@ ldflags-y := -shared -nostdlib -soname=linux-vdso.so.1  --hash-style=sysv \
 ccflags-y := -fno-stack-protector
 ccflags-y += -DDISABLE_BRANCH_PROFILING  -ffixed-x18
 ccflags-y += $(DISABLE_LTO)
-ccflags-y += -Ofast
 
 # Force -O3 to avoid libgcc dependencies
 CFLAGS_REMOVE_vgettimeofday.o = -pg -Os
-CFLAGS_vgettimeofday.o = -fPIC
-ifeq ($(cc-name),clang)
-CFLAGS_vgettimeofday.o = -Ofast
-else
-CFLAGS_vgettimeofday.o = -O3
+CFLAGS_vgettimeofday.o = -O3 -fPIC
+ifneq ($(cc-name),clang)
 CFLAGS_vgettimeofday.o += -mcmodel=tiny
-CFLAGS_vgettimeofday.o += -fasynchronous-unwind-tables
 endif
 
 # Disable gcov profiling for VDSO code
