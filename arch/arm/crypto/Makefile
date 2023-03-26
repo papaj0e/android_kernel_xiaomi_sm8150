@@ -81,4 +81,3 @@ endif
 poly1305-aflags-$(CONFIG_CPU_V7) := -U__LINUX_ARM_ARCH__ -D__LINUX_ARM_ARCH__=5
 poly1305-aflags-$(CONFIG_KERNEL_MODE_NEON) := -U__LINUX_ARM_ARCH__ -D__LINUX_ARM_ARCH__=7
 AFLAGS_poly1305-core.o += $(poly1305-aflags-y)
->>>>>>> 401d867c40286 (UPSTREAM: crypto: arm/poly1305 - incorporate OpenSSL/CRYPTOGAMS NEON implementation)
