@@ -666,7 +666,7 @@ int incfs_read_next_metadata_record(struct backing_file_context *bfc,
 	md_record_size = le16_to_cpu(md_hdr->h_record_size);
 
 	if (md_record_size > max_md_size) {
-		pr_warn("incfs: The record is too large. Size: %zu",
+		pr_warn("incfs: The record is too large. Size: %ld",
 				md_record_size);
 		return -EBADMSG;
 	}
