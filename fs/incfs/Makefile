@@ -8,5 +8,3 @@ incrementalfs-y := \
 	main.o \
 	pseudo_files.o \
 	vfs.o
-
-incrementalfs-$(CONFIG_FS_VERITY) += verity.o
