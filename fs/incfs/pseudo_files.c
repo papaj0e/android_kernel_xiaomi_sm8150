@@ -414,8 +414,27 @@ static void notify_create(struct file *pending_reads_file,
 
 	fsnotify_create(d_inode(dir_path.dentry), file);
 
-	if (file_id_str) {
-		dir = incfs_lookup_dentry(base_path.dentry, INCFS_INDEX_NAME);
+	dir = incfs_lookup_dentry(base_path.dentry, INCFS_INDEX_NAME);
+	if (IS_ERR(dir)) {
+		error = PTR_ERR(dir);
+		dir = NULL;
+		goto out;
+	}
+
+	dput(file);
+	file = incfs_lookup_dentry(dir, file_id_str);
+	if (IS_ERR(file)) {
+		error = PTR_ERR(file);
+		file = NULL;
+		goto out;
+	}
+
+	fsnotify_create(d_inode(dir), file);
+
+	if (incomplete_file) {
+		dput(dir);
+		dir = incfs_lookup_dentry(base_path.dentry,
+					  INCFS_INCOMPLETE_NAME);
 		if (IS_ERR(dir)) {
 			error = PTR_ERR(dir);
 			dir = NULL;
@@ -431,27 +450,6 @@ static void notify_create(struct file *pending_reads_file,
 		}
 
 		fsnotify_create(d_inode(dir), file);
-
-		if (incomplete_file) {
-			dput(dir);
-			dir = incfs_lookup_dentry(base_path.dentry,
-						  INCFS_INCOMPLETE_NAME);
-			if (IS_ERR(dir)) {
-				error = PTR_ERR(dir);
-				dir = NULL;
-				goto out;
-			}
-
-			dput(file);
-			file = incfs_lookup_dentry(dir, file_id_str);
-			if (IS_ERR(file)) {
-				error = PTR_ERR(file);
-				file = NULL;
-				goto out;
-			}
-
-			fsnotify_create(d_inode(dir), file);
-		}
 	}
 out:
 	if (error)
@@ -751,9 +749,8 @@ out:
 	return error;
 }
 
-static long ioctl_create_mapped_file(struct file *file, void __user *arg)
+static long ioctl_create_mapped_file(struct mount_info *mi, void __user *arg)
 {
-	struct mount_info *mi = get_mount_info(file_superblock(file));
 	struct incfs_create_mapped_file_args __user *args_usr_ptr = arg;
 	struct incfs_create_mapped_file_args args = {};
 	char *file_name;
@@ -882,9 +879,6 @@ static long ioctl_create_mapped_file(struct file *file, void __user *arg)
 	if (error)
 		goto delete_file;
 
-	notify_create(file, u64_to_user_ptr(args.directory_path), file_name,
-		      NULL, false);
-
 	goto out;
 
 delete_file:
@@ -1000,7 +994,7 @@ static long pending_reads_dispatch_ioctl(struct file *f, unsigned int req,
 	case INCFS_IOC_PERMIT_FILL:
 		return ioctl_permit_fill(f, (void __user *)arg);
 	case INCFS_IOC_CREATE_MAPPED_FILE:
-		return ioctl_create_mapped_file(f, (void __user *)arg);
+		return ioctl_create_mapped_file(mi, (void __user *)arg);
 	case INCFS_IOC_GET_READ_TIMEOUTS:
 		return ioctl_get_read_timeouts(mi, (void __user *)arg);
 	case INCFS_IOC_SET_READ_TIMEOUTS:
