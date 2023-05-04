@@ -246,8 +246,7 @@ int incfs_write_blockmap_to_backing_file(struct backing_file_context *bfc,
 }
 
 int incfs_write_signature_to_backing_file(struct backing_file_context *bfc,
-					struct mem_range sig, u32 tree_size,
-					loff_t *tree_offset, loff_t *sig_offset)
+					  struct mem_range sig, u32 tree_size)
 {
 	struct incfs_file_signature sg = {};
 	int result = 0;
@@ -266,10 +265,12 @@ int incfs_write_signature_to_backing_file(struct backing_file_context *bfc,
 	sg.sg_header.h_record_size = cpu_to_le16(sizeof(sg));
 	sg.sg_header.h_next_md_offset = cpu_to_le64(0);
 	if (sig.data != NULL && sig.len > 0) {
-		sg.sg_sig_size = cpu_to_le32(sig.len);
-		sg.sg_sig_offset = cpu_to_le64(rollback_pos);
+		loff_t pos = incfs_get_end_offset(bfc->bc_file);
 
-		result = write_to_bf(bfc, sig.data, sig.len, rollback_pos);
+		sg.sg_sig_size = cpu_to_le32(sig.len);
+		sg.sg_sig_offset = cpu_to_le64(pos);
+
+		result = write_to_bf(bfc, sig.data, sig.len, pos);
 		if (result)
 			goto err;
 	}
@@ -305,13 +306,6 @@ err:
 	if (result)
 		/* Error, rollback file changes */
 		truncate_backing_file(bfc, rollback_pos);
-	else {
-		if (tree_offset)
-			*tree_offset = tree_area_pos;
-		if (sig_offset)
-			*sig_offset = rollback_pos;
-	}
-
 	return result;
 }
 
