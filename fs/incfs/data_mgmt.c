@@ -123,7 +123,6 @@ int incfs_realloc_mount_info(struct mount_info *mi,
 
 void incfs_free_mount_info(struct mount_info *mi)
 {
-	int i;
 	if (!mi)
 		return;
 
@@ -137,8 +136,8 @@ void incfs_free_mount_info(struct mount_info *mi)
 	mutex_destroy(&mi->mi_zstd_workspace_mutex);
 	put_cred(mi->mi_owner);
 	kfree(mi->mi_log.rl_ring_buf);
-	for (i = 0; i < ARRAY_SIZE(mi->pseudo_file_xattr); ++i)
-		kfree(mi->pseudo_file_xattr[i].data);
+	kfree(mi->log_xattr);
+	kfree(mi->pending_read_xattr);
 	kfree(mi->mi_per_uid_read_timeouts);
 	kfree(mi);
 }
