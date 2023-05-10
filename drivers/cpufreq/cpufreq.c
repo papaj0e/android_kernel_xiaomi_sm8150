@@ -739,6 +739,9 @@ static ssize_t store_##file_name					\
 									\
 	temp = new_policy.object;					\
 	ret = cpufreq_set_policy(policy, &new_policy);		\
+	if (&policy->object == &policy->min && !ret)				\
+		pr_info("BOOST: %d -> %d by %s(%d)\n", policy->user_policy.object, new_policy.object, current->comm, current->pid);						\
+									\
 	if (!ret)							\
 		policy->user_policy.object = temp;			\
 									\
