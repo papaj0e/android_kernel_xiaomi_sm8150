@@ -140,3 +140,10 @@ gcc64
 proton-clang
 proton-clang-master
 
+#ignore logs and test files
+log.*
+*.log
+*.zip
+build-clang.sh
+main.sh
+test.c
