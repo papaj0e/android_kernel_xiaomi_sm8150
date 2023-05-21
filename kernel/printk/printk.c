@@ -819,7 +819,8 @@ static ssize_t devkmsg_write(struct kiocb *iocb, struct iov_iter *from)
 			len -= endp - line;
 			line = endp;
 			if (memcmp(line, "logd: Skipping", sizeof("logd: Skipping")-1) == 0 ||
-				memcmp(line, "init: DM_DEV_STATUS", sizeof("init: DM_DEV_STATUS")-1) == 0)
+				memcmp(line, "init: DM_DEV_STATUS", sizeof("init: DM_DEV_STATUS")-1) == 0 ||
+				memcmp(line, "init: Untracked pid", sizeof("init: Untracked pid")-1) == 0)
 				goto ignore;
 		}
 	}
