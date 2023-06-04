@@ -885,4 +885,8 @@ And public attribution of xiaomi platforms(like F1 and so and)
 		status = "ok";
 		qcom,firmware-name = "slpi_rp";
 	};
+
+	thermal_message: thermal-message {
+		board-sensor = "quiet_therm";
+	};
 };
