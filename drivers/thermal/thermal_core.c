@@ -2003,7 +2003,7 @@ static int of_parse_thermal_message(void)
 	if (of_property_read_string(np, "board-sensor", &board_sensor))
 		return -EINVAL;
 
-	pr_info("%s board sensor: %s\n", board_sensor);
+	pr_info("board sensor: %s\n", board_sensor);
 
 	return 0;
 }
