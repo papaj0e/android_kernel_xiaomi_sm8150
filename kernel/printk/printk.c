@@ -806,9 +806,6 @@ static ssize_t devkmsg_write(struct kiocb *iocb, struct iov_iter *from)
 	if (line[0] == '<') {
 		char *endp = NULL;
 		unsigned int u;
-		if (memcmp(line+3, "batteryd", sizeof("batteryd")-1) == 0 ||
-			   memcmp(line+3, "healthd", sizeof("healthd")-1) == 0)
-			goto ignore;
 
 		u = simple_strtoul(line + 1, &endp, 10);
 		if (endp && endp[0] == '>') {
@@ -818,9 +815,11 @@ static ssize_t devkmsg_write(struct kiocb *iocb, struct iov_iter *from)
 			endp++;
 			len -= endp - line;
 			line = endp;
-			if (memcmp(line, "logd: Skipping", sizeof("logd: Skipping")-1) == 0 ||
-				memcmp(line, "init: DM_DEV_STATUS", sizeof("init: DM_DEV_STATUS")-1) == 0 ||
-				memcmp(line, "init: Untracked pid", sizeof("init: Untracked pid")-1) == 0)
+			if (str_has_prefix(line, "batteryd") ||
+				str_has_prefix(line, "healthd") ||
+				str_has_prefix(line, "logd: Skipping") ||
+				str_has_prefix(line, "init: DM_DEV_STATUS") ||
+				str_has_prefix(line, "init: Untracked pid"))
 				goto ignore;
 		}
 	}
