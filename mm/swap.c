@@ -621,7 +621,6 @@ static void lru_deactivate_fn(struct page *page, struct lruvec *lruvec,
 {
 	if (PageLRU(page) && PageActive(page) && !PageUnevictable(page)) {
 		int file = page_is_file_cache(page);
-		int lru = file ? LRU_INACTIVE_FILE : LRU_INACTIVE_ANON;
 
 		del_page_from_lru_list(page, lruvec);
 		ClearPageActive(page);
