@@ -1121,7 +1121,7 @@ static u32 get_pred_busy(struct task_struct *p,
 	u8 *buckets = p->ravg.busy_buckets;
 	u32 *hist = p->ravg.sum_history;
 	u32 dmin, dmax;
-	u64 cur_freq_runtime = 0;
+	u64 __maybe_unused cur_freq_runtime = 0;
 	int first = NUM_BUSY_BUCKETS, final;
 	u32 ret = runtime;
 
