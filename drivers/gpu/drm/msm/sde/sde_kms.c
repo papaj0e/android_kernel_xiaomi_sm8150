@@ -2894,7 +2894,9 @@ retry:
 	if (ret)
 		goto end;
 
-	drm_atomic_commit(state);
+	ret = drm_atomic_commit(state);
+	if (ret < 0)
+		DRM_ERROR("failed to commit atomic state, %d\n", ret);
 end:
 	if (state)
 		drm_atomic_state_put(state);
