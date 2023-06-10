@@ -587,12 +587,13 @@ static void _msm_drm_commit_work_cb(struct kthread_work *work)
 	ktime_t start, end;
 	s64 duration;
 
-	start = ktime_get();
-	frame_stat_collector(0, COMMIT_START_TS);
 	struct pm_qos_request req = {
 		.type = PM_QOS_REQ_AFFINE_CORES,
 		.cpus_affine = BIT(raw_smp_processor_id())
 	};
+
+	start = ktime_get();
+	frame_stat_collector(0, COMMIT_START_TS);
 
 	/*
 	 * Optimistically assume the current task won't migrate to another CPU
