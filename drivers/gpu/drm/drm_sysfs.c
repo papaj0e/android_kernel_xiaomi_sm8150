@@ -387,12 +387,19 @@ ssize_t dim_layer_enable_store(struct device *device,
 {
 	struct drm_connector *connector = NULL;
 	bool fod_dimlayer_enabled = false;
+	int ret;
 
 	connector = to_drm_connector(device);
 	if (!connector)
 		return 0;
 
-	kstrtobool(buf, &fod_dimlayer_enabled);
+	ret = kstrtobool(buf, &fod_dimlayer_enabled);
+	if (ret) {
+		DRM_ERROR("input buffer conversion failed\n");
+		ret = -EAGAIN;
+		return ret;
+	}
+
 	set_fod_dimlayer_status(connector, fod_dimlayer_enabled);
 
 	pr_info("set fod dimlayer %s", fod_dimlayer_enabled ? "true" : "false");
