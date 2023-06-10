@@ -1598,7 +1598,7 @@ static void print_ctx_regs(struct arm_smmu_device *smmu, struct arm_smmu_cfg
 	dev_err(smmu->dev, "FAR    = 0x%016llx\n",
 		readq_relaxed(cb_base + ARM_SMMU_CB_FAR));
 	dev_err(smmu->dev, "PAR    = 0x%016llx\n",
-		(void *)readq_relaxed(cb_base + ARM_SMMU_CB_PAR));
+		readq_relaxed(cb_base + ARM_SMMU_CB_PAR));
 
 	dev_err(smmu->dev,
 		"FSR    = 0x%08x [%s%s%s%s%s%s%s%s%s%s]\n",
@@ -1618,15 +1618,15 @@ static void print_ctx_regs(struct arm_smmu_device *smmu, struct arm_smmu_cfg
 
 	if (cfg->fmt == ARM_SMMU_CTX_FMT_AARCH32_S) {
 		dev_err(smmu->dev, "TTBR0  = 0x%08x\n",
-			(void *)(long)readl_relaxed(cb_base + ARM_SMMU_CB_TTBR0));
+			(uint32_t)readl_relaxed(cb_base + ARM_SMMU_CB_TTBR0));
 		dev_err(smmu->dev, "TTBR1  = 0x%08x\n",
-			(void *)(long)readl_relaxed(cb_base + ARM_SMMU_CB_TTBR1));
+			(uint32_t)readl_relaxed(cb_base + ARM_SMMU_CB_TTBR1));
 	} else {
 		dev_err(smmu->dev, "TTBR0  = 0x%016llx\n",
-			(void *)readq_relaxed(cb_base + ARM_SMMU_CB_TTBR0));
+			readq_relaxed(cb_base + ARM_SMMU_CB_TTBR0));
 		if (stage1)
 			dev_err(smmu->dev, "TTBR1  = 0x%016llx\n",
-				(void *)readq_relaxed(cb_base + ARM_SMMU_CB_TTBR1));
+				readq_relaxed(cb_base + ARM_SMMU_CB_TTBR1));
 	}
 
 

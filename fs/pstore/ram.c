@@ -789,7 +789,7 @@ static int ramoops_probe(struct platform_device *pdev)
 
 	dump_mem_sz = cxt->size - cxt->console_size - cxt->ftrace_size
 			- cxt->pmsg_size;
-	pr_err("dump_mem_sz=%d,cxt->record_size=%d,cxt->size=%d,cxt->console_size=%d,cxt->ftrace_size=%d,cxt->pmsg_size=%d\n",
+	pr_err("dump_mem_sz=%lu,cxt->record_size=%lu,cxt->size=%lu,cxt->console_size=%lu,cxt->ftrace_size=%lu,cxt->pmsg_size=%lu\n",
 				dump_mem_sz, cxt->record_size, cxt->size, cxt->console_size,
 				cxt->ftrace_size, cxt->pmsg_size);
 	err = ramoops_init_przs("dump", dev, cxt, &cxt->dprzs, &paddr,
