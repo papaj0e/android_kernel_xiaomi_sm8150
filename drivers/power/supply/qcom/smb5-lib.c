@@ -2972,7 +2972,7 @@ static void smblib_dc_therm_charging(struct smb_charger *chg,
 	if (!chg->wls_psy) {
 		chg->wls_psy = power_supply_get_by_name("wireless");
 		if (!chg->wls_psy)
-			return -ENODEV;
+			return;
 	}
 	rc = power_supply_get_property(chg->wls_psy,
 				POWER_SUPPLY_PROP_TX_ADAPTER,
