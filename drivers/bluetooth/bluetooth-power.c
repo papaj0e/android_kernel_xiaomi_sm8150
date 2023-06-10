@@ -859,7 +859,7 @@ static void  set_pwr_srcs_status(struct bt_power_vreg_data *handle)
 				bt_power_src_status[ldo_index] =
 					(int)regulator_get_voltage(handle->reg);
 				BT_PWR_ERR("%s(%d) value(%d)", handle->name,
-					handle, bt_power_src_status[ldo_index]);
+					ldo_index, bt_power_src_status[ldo_index]);
 			} else {
 				BT_PWR_ERR("%s:%s is_enabled: %d",
 					__func__, handle->name,

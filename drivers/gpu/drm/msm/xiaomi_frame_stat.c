@@ -22,7 +22,7 @@ void frame_stat_notify(int data)
 		display = container_of(host, struct dsi_display, host);
 
 	if (!display) {
-		pr_err("%s: invalid param.\n");
+		pr_err("%s: invalid param.\n", __func__);
 		return;
 	}
 

@@ -720,7 +720,7 @@ int sde_connector_update_hbm(struct sde_connector *c_conn)
 
 	dsi_display = c_conn->display;
 	if (!dsi_display || !dsi_display->panel || !dsi_display->drm_dev) {
-		SDE_ERROR("Invalid params(s) dsi_display %pK, panel %pK\n",
+		SDE_ERROR("Invalid params(s) dsi_display %pK, panel %pK, drm_dev %pK\n",
 			dsi_display,
 			((dsi_display) ? dsi_display->panel : NULL),
 			((dsi_display) ? dsi_display->drm_dev : NULL));
