@@ -672,6 +672,7 @@ static const struct file_operations gf_fops = {
 #endif
 };
 
+#ifndef GOODIX_DRM_INTERFACE_WA
 static void set_fingerprintd_nice(int nice)
 {
 	if(process)	{
@@ -679,8 +680,6 @@ static void set_fingerprintd_nice(int nice)
 	}
 }
 
-
-#ifndef GOODIX_DRM_INTERFACE_WA
 static int goodix_fb_state_chg_callback(struct notifier_block *nb,
 		unsigned long val, void *data)
 {
@@ -878,7 +877,10 @@ static int gf_remove(struct platform_device *pdev)
 	if (gf_dev->irq)
 		free_irq(gf_dev->irq, gf_dev);
 
+#ifndef GOODIX_DRM_INTERFACE_WA
 	msm_drm_unregister_client(&gf_dev->notifier);
+#endif
+
 	if (gf_dev->input)
 		input_unregister_device(gf_dev->input);
 	input_free_device(gf_dev->input);
@@ -890,10 +892,6 @@ static int gf_remove(struct platform_device *pdev)
 	clear_bit(MINOR(gf_dev->devt), minors);
 	if (gf_dev->users == 0)
 		gf_cleanup(gf_dev);
-
-#ifndef GOODIX_DRM_INTERFACE_WA
-	msm_drm_unregister_client(&gf_dev->notifier);
-#endif
 	mutex_unlock(&device_list_lock);
 
 	return 0;
