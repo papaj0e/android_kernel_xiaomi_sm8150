@@ -732,7 +732,7 @@ CL_FLAGS += -mllvm -polly \
 			-mllvm -polly-invariant-load-hoisting
 endif
 
-GC_FLAGS += -fgraphite-identity -floop-nest-optimize -fno-semantic-interposition -fdevirtualize-at-ltrans -fipa-pta -fno-plt 
+GC_FLAGS += -fgraphite-identity -floop-nest-optimize -fno-semantic-interposition -fdevirtualize-at-ltrans -fipa-pta -fno-plt -ftree-vectorize
 
 export GC_FLAGS
 export CL_FLAGS
