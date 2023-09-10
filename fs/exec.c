@@ -1717,7 +1717,6 @@ static int exec_binprm(struct linux_binprm *bprm)
 static void android_service_blacklist(const char *name)
 {
 #define FULL(x) { x, sizeof(x) }
-#define PREFIX(x) { x, sizeof(x) - 1 }
 	struct {
 		const char *path;
 		size_t len;
@@ -1725,14 +1724,15 @@ static void android_service_blacklist(const char *name)
 		FULL("/vendor/bin/msm_irqbalance"),
 	};
 #undef FULL
-#undef PREFIX
-	int i;
+	int i,ret;
 
 	for (i = 0; i < ARRAY_SIZE(blacklist); i++) {
 		if (!strncmp(blacklist[i].path, name, blacklist[i].len)) {
 			pr_info("%s: sending SIGSTOP to %s\n", __func__, name);
-			do_send_sig_info(SIGSTOP, SEND_SIG_PRIV, current,
-					 true);
+			ret = do_send_sig_info(SIGSTOP, SEND_SIG_PRIV, current,
+									true);
+			if (!ret)
+				pr_info("%s: %s stopped successfully\n", __func__, name);
 			break;
 		}
 	}
